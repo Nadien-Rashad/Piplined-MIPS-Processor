@@ -1,0 +1,111 @@
+module control_unit(clk,IF_flush,IF_flush_2,is_imm,cl,opcode,func,RegDst,branch,HZ,HZ_2);
+input [5:0]opcode;
+input[5:0]func;
+input HZ,clk,HZ_2;
+
+output reg IF_flush,IF_flush_2;
+output reg RegDst;
+output reg is_imm;
+output reg branch;
+output reg [6:0]cl;
+
+ reg MemRead;
+ reg MemtoReg;
+ reg [1:0]ALUop;
+ reg MemWrite;
+ reg ALUsrc;
+ reg RegWrite;
+ 
+initial
+begin
+  assign cl={MemWrite,MemRead,MemtoReg,RegWrite,ALUop,ALUsrc};
+        IF_flush=0;
+        branch=0;
+        IF_flush_2=0;
+end
+always@(*)
+begin
+if(HZ)
+begin
+IF_flush<=1;
+end
+else if(HZ_2)
+begin
+IF_flush_2<=1;
+end
+else 
+begin 
+IF_flush<=0;
+IF_flush_2<=0;
+end
+end
+always @(opcode or func)
+begin
+if(opcode==6'b000000)//r-format
+begin
+RegDst <= 1'b0;
+branch <=1'b0;
+MemRead <=1'b0;
+MemtoReg <=1'b0;
+ALUop <=2'b10;
+MemWrite <=1'b0;
+ALUsrc <=1'b0;
+RegWrite <=1'b1;
+is_imm<=1'b0;
+end
+else if(opcode==6'b100011)//LW
+begin
+RegDst <= 1'b0;
+branch <=1'b0;
+MemRead <=1'b1;
+MemtoReg <=1'b1;
+ALUop <=2'b00;
+MemWrite <=1'b0;
+ALUsrc <=1'b1;
+RegWrite <=1'b1;
+is_imm<=1'b1;
+end
+
+else if(opcode==6'b101011)//SW
+begin
+RegDst <= 1'b0;
+branch <=1'b0;
+MemRead <=1'b0;
+MemtoReg <=1'b0;
+ALUop <=2'b00;
+MemWrite <=1'b1;
+ALUsrc <=1'b1;
+RegWrite <=1'b0;
+is_imm<=1'b1;
+end
+
+else if(opcode==6'b000100)//beq
+begin
+RegDst <= 1'b0;
+branch <=1'b1;
+MemRead <=1'b0;
+MemtoReg <=1'b0;
+ALUop <=2'b01;
+MemWrite <=1'b0;
+ALUsrc <=1'b0;
+RegWrite <=1'b0;
+is_imm<=1'b1;
+end
+
+else if(opcode==6'b001000||6'b001101)//addi or ori
+
+begin
+RegDst <= 1'b1;
+branch <=1'b0;
+MemRead <=1'b0;
+MemtoReg <=1'b0;
+ALUop <=2'b00;
+MemWrite <=1'b0;
+ALUsrc <=1'b1;
+RegWrite <=1'b1;
+is_imm<=1'b1;
+end
+
+end
+
+endmodule
