@@ -1,4 +1,4 @@
-module mux_7bit_with0(out,in1,sel); // mux32bit  implementation
+module mux_7bit_with0(out,in1,sel); 
 input [6:0] in1;
 input sel;
 output reg[6:0] out;
