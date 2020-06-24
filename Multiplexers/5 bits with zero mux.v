@@ -1,4 +1,4 @@
-module mux_5bit(out,in1,in2,sel); // mux32bit  implementation
+module mux_5bit(out,in1,in2,sel);
 input [4:0] in1,in2;
 input sel;
 output reg[4:0] out;
